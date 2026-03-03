@@ -12,24 +12,24 @@
 			containerPortal = D01CFEDB2F566A1900A029D6 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D01CFEE22F566A1900A029D6;
-			remoteInfo = "TheMirror";
+			remoteInfo = TheMirror;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D01CFEE32F566A1900A029D6 /* TheMirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TheMirror.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D01CFF302F56904400A029D6 /* TheMirrorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TheMirrorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D01CFEE32F566A1900A029D6 /* TheMirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheMirror.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D01CFF302F56904400A029D6 /* TheMirrorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheMirrorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D01CFEE52F566A1900A029D6 /* TheMirror */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "TheMirror";
+			path = TheMirror;
 			sourceTree = "<group>";
 		};
 		D01CFF312F56904400A029D6 /* TheMirrorTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "TheMirrorTests";
+			path = TheMirrorTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,10 +88,10 @@
 			fileSystemSynchronizedGroups = (
 				D01CFEE52F566A1900A029D6 /* TheMirror */,
 			);
-			name = "TheMirror";
+			name = TheMirror;
 			packageProductDependencies = (
 			);
-			productName = "TheMirror";
+			productName = TheMirror;
 			productReference = D01CFEE32F566A1900A029D6 /* TheMirror.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -111,10 +111,10 @@
 			fileSystemSynchronizedGroups = (
 				D01CFF312F56904400A029D6 /* TheMirrorTests */,
 			);
-			name = "TheMirrorTests";
+			name = TheMirrorTests;
 			packageProductDependencies = (
 			);
-			productName = "TheMirrorTests";
+			productName = TheMirrorTests;
 			productReference = D01CFF302F56904400A029D6 /* TheMirrorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -341,7 +341,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "martinmr.TheMirror";
+				PRODUCT_BUNDLE_IDENTIFIER = martinmr.TheMirror;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -373,7 +373,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "martinmr.TheMirror";
+				PRODUCT_BUNDLE_IDENTIFIER = martinmr.TheMirror;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -395,7 +395,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "martinmr.TheMirrorTests";
+				PRODUCT_BUNDLE_IDENTIFIER = martinmr.TheMirrorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -417,7 +417,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "martinmr.TheMirrorTests";
+				PRODUCT_BUNDLE_IDENTIFIER = martinmr.TheMirrorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

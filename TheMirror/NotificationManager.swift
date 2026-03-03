@@ -87,7 +87,7 @@ final class NotificationManager: NSObject {
         DispatchQueue.main.async {
             TimerEngine.shared.syncFromPersistence()
         }
-    }
+     }
 
     /// Schedules a single notification with the given identifier, delay, and sound.
     private func schedule(
