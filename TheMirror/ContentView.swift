@@ -7,10 +7,7 @@
 
 import SwiftUI
 
-/// Root view of the app.
-///
-/// Renders ``SettingsView`` and triggers foreground recovery via ``TimerEngine/recover()``
-/// whenever the app returns from the background.
+/// Root view; renders SettingsView and triggers recovery when entering the foreground.
 struct ContentView: View {
 
     @ObservedObject private var engine = TimerEngine.shared
@@ -29,10 +26,7 @@ struct ContentView: View {
 // MARK: - Color hex helper
 
 extension Color {
-    /// Initialises a `Color` from a CSS-style hex string (with or without a leading `#`), e.g.
-    /// `"#B8976C"` or `"B8976C"`.
-    ///
-    /// - Parameter hex: A six-digit hexadecimal colour string.
+    /// Creates a Color from a six-digit hex string, with or without a leading #.
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: .init(charactersIn: "#"))
         let scanner = Scanner(string: hex)

@@ -12,7 +12,7 @@ enum QuoteSetID: String, CaseIterable {
     case mirror = "mirror"
     case dreamYoga = "dreamYoga"
 
-    /// Human-readable label shown in the UI.
+    /// Human-readable name for display.
     var displayName: String {
         switch self {
         case .mirror: return "The Mirror"
@@ -26,7 +26,7 @@ enum SoundPreference: String, CaseIterable {
     case bowl = "bowl"
     case silent = "silent"
 
-    /// Human-readable label shown in the UI.
+    /// Human-readable name for display.
     var displayName: String {
         switch self {
         case .bowl: return "Bowl"
@@ -37,9 +37,7 @@ enum SoundPreference: String, CaseIterable {
 
 // MARK: - Persistence
 
-/// Thin `UserDefaults` wrapper that centralises all persisted app state.
-///
-/// All properties are static; there is no instance to create.
+/// Static UserDefaults wrapper for all persisted app state.
 struct Persistence {
 
     private enum Keys {
@@ -55,10 +53,7 @@ struct Persistence {
 
     // MARK: Timer state
 
-    /// Current notification interval in minutes.
-    ///
-    /// Falls back to `5.0` when no value has been stored (i.e. on first launch or after
-    /// ``resetInterval()`` clears the key).
+    /// Notification interval in minutes; defaults to 5.0.
     static var intervalMinutes: Double {
         get {
             let v = defaults.double(forKey: Keys.intervalMinutes)
@@ -75,7 +70,7 @@ struct Persistence {
 
     // MARK: Quote
 
-    /// The quote set the user has selected. Defaults to `.mirror`.
+    /// Selected quote set; defaults to .mirror.
     static var quoteSet: QuoteSetID {
         get {
             guard let raw = defaults.string(forKey: Keys.quoteSet),
@@ -85,7 +80,7 @@ struct Persistence {
         set { defaults.set(newValue.rawValue, forKey: Keys.quoteSet) }
     }
 
-    /// Sequential index into the active quote set, incremented by ``QuoteStore``.
+    /// Sequential index into the active quote set.
     static var quoteIndex: Int {
         get { defaults.integer(forKey: Keys.quoteIndex) }
         set { defaults.set(newValue, forKey: Keys.quoteIndex) }
@@ -93,7 +88,7 @@ struct Persistence {
 
     // MARK: Sound
 
-    /// The notification sound the user has selected. Defaults to `.bowl`.
+    /// Selected notification sound; defaults to .bowl.
     static var sound: SoundPreference {
         get {
             guard let raw = defaults.string(forKey: Keys.sound),
@@ -105,8 +100,7 @@ struct Persistence {
 
     // MARK: Schedule metadata
 
-    /// The timestamp at which the current notification pair was scheduled, or
-    /// `nil` if the timer has never been started.
+    /// Timestamp of the last scheduled notification batch, or nil if never started.
     static var lastScheduledAt: Date? {
         get {
             let t = defaults.double(forKey: Keys.lastScheduledAt)
@@ -123,10 +117,7 @@ struct Persistence {
 
     // MARK: Reset
 
-    /// Clears the stored interval so that the next read returns the default starting value (5
-    /// minutes in production).
-    ///
-    /// Called by ``TimerEngine/start()`` to reset the backoff on every new session.
+    /// Clears the stored interval so the next read returns the default (5 minutes).
     static func resetInterval() {
         defaults.removeObject(forKey: Keys.intervalMinutes)
     }

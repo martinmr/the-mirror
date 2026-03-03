@@ -6,12 +6,7 @@
 import UserNotifications
 import Foundation
 
-/// Manages the entire local notification lifecycle: permission request, category registration,
-/// scheduling, and response handling.
-///
-/// The singleton is the `UNUserNotificationCenterDelegate` for the app and writes directly to
-/// ``Persistence``, so it operates correctly even when the app is cold-launched by a notification
-/// action (before SwiftUI is initialised).
+/// Singleton that manages notification permissions, scheduling, and response handling.
 final class NotificationManager: NSObject {
 
     /// The shared singleton instance.
@@ -27,7 +22,7 @@ final class NotificationManager: NSObject {
 
     // MARK: - Action identifiers
 
-    /// Raw-value identifiers for the two notification action buttons.
+    /// Identifiers for the two notification action buttons.
     enum Action: String {
         case present = "PRESENT"
         case distracted = "DISTRACTED"
@@ -35,10 +30,7 @@ final class NotificationManager: NSObject {
 
     // MARK: - Setup
 
-    /// Registers the notification category and its actions, assigns `self` as the
-    /// `UNUserNotificationCenter` delegate, and requests authorisation.
-    ///
-    /// Must be called once at app launch, before any scheduling takes place.
+    /// Registers the notification category, sets the delegate, and requests authorization. Call once at launch.
     func setUp() {
         let center = UNUserNotificationCenter.current()
         center.delegate = self
@@ -70,14 +62,7 @@ final class NotificationManager: NSObject {
 
     // MARK: - Schedule
 
-    /// Cancels all pending notifications and schedules a main notification plus up to 20 follow-ups.
-    ///
-    /// - Main fires at the current interval.
-    /// - Follow-ups are spaced `min(5, interval/2)` minutes apart after the main, so the chain
-    ///   survives even if the user ignores every notification until they next open the app.
-    /// - All pending notifications are cancelled when the user responds to any one of them.
-    ///
-    /// Does nothing if ``Persistence/isRunning`` is `false`.
+    /// Cancels pending notifications and schedules a new main notification plus follow-ups. No-op if not running.
     func scheduleNext() {
         guard Persistence.isRunning else { return }
 
@@ -119,12 +104,7 @@ final class NotificationManager: NSObject {
 
     // MARK: - Foreground recovery
 
-    /// Checks whether any notification is still pending and, if not, schedules a new chain.
-    ///
-    /// Should be called every time the app enters the foreground so that the notification chain can
-    /// recover if a background wakeup was terminated by iOS before scheduling completed.
-    ///
-    /// Does nothing if ``Persistence/isRunning`` is `false`.
+    /// Re-schedules the notification chain if no notifications are pending. No-op if not running.
     func ensureNotificationPending() {
         guard Persistence.isRunning else { return }
 
@@ -140,13 +120,7 @@ final class NotificationManager: NSObject {
 
     // MARK: - Backoff algorithm
 
-    /// Computes the next notification interval using exponential backoff with ±25 % jitter, clamped
-    /// to [5, 90] minutes.
-    ///
-    /// - Parameters:
-    ///   - current: The current interval in minutes.
-    ///   - multiplier: Scaling factor — `2.0` for Present, `0.5` for Distracted.
-    /// - Returns: The next interval in minutes, floored to a whole minute for values ≥ 1 minute.
+    /// Returns the next interval in minutes by scaling current by multiplier, adding jitter, and clamping to [5, 60].
     func nextInterval(current: Double, multiplier: Double) -> Double {
         let raw = current * multiplier
         let jitter = Double.random(in: 0.80...1.20)
@@ -157,11 +131,7 @@ final class NotificationManager: NSObject {
 
     // MARK: - Sound helper
 
-    /// Returns the `UNNotificationSound` that matches the user's preference.
-    ///
-    /// Returns `nil` for silent (vibration only) or the bowl sound for `.bowl`.
-    ///
-    /// Falls back to the system default sound when `bowl.caf` is not bundled.
+    /// Returns the UNNotificationSound for the user's preference, or nil for silent.
     private func notificationSound() -> UNNotificationSound? {
         switch Persistence.sound {
         case .silent:
@@ -179,7 +149,7 @@ final class NotificationManager: NSObject {
 
 extension NotificationManager: UNUserNotificationCenterDelegate {
 
-    /// Allows notifications to be displayed as banners while the app is in the foreground.
+    /// Shows notifications as banners even when the app is foregrounded.
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
@@ -188,10 +158,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         completionHandler([.banner, .sound])
     }
 
-    /// Processes the user's response to any notification and schedules the next chain.
-    ///
-    /// All pending notifications are cancelled on any response. The multiplier applied depends
-    /// on the action tapped — Present (×2.0), Distracted (×0.5), or default tap (×2.0).
+    /// Handles a notification action and reschedules the next notification chain.
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,

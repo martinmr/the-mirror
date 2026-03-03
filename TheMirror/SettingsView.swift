@@ -6,11 +6,7 @@
 import SwiftUI
 import AVFoundation
 
-/// The sole app screen, providing controls for starting/stopping the timer and configuring quote
-/// set and sound preferences.
-///
-/// Reads and writes state through ``TimerEngine``, which is injected as an environment object by
-/// ``ContentView``.
+/// Main app screen with controls for starting/stopping the timer and configuring quote set and sound.
 struct SettingsView: View {
 
     @EnvironmentObject private var engine: TimerEngine
@@ -120,8 +116,7 @@ struct SettingsView: View {
 
     // MARK: - Sound segment control
 
-    /// Custom segmented control for sound preference. The Bowl segment supports
-    /// a long press to preview the sound without leaving the screen.
+    /// Segmented control for sound preference; long-press Bowl to preview.
     private var soundSegmentedControl: some View {
         HStack(spacing: 0) {
             ForEach(SoundPreference.allCases, id: \.self) { pref in
@@ -146,7 +141,7 @@ struct SettingsView: View {
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Self.goldDim, lineWidth: 0.5))
     }
 
-    /// Plays `bowl.caf` from the app bundle as an in-app preview.
+    /// Plays the bowl sound from the app bundle as a preview.
     private func playBowlSound() {
         guard let url = Bundle.main.url(forResource: "bowl", withExtension: "caf") else { return }
         audioPlayer = try? AVAudioPlayer(contentsOf: url)
@@ -155,12 +150,7 @@ struct SettingsView: View {
 
     // MARK: - Helper
 
-    /// Renders a labelled control section with a spaced title and the provided content view below
-    /// it.
-    ///
-    /// - Parameters:
-    ///   - label: The section title, displayed in small caps above the control.
-    ///   - content: The control to render below the label.
+    /// Renders a labelled section with a title above and the provided content below.
     @ViewBuilder
     private func controlSection<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {

@@ -5,8 +5,7 @@
 
 import Foundation
 
-/// Provides quotes for notification bodies and manages sequential rotation across both built-in
-/// quote sets.
+/// Provides and rotates quotes for notification bodies.
 struct QuoteStore {
 
     // MARK: Quote Sets
@@ -35,11 +34,7 @@ struct QuoteStore {
 
     // MARK: Next Quote
 
-    /// Returns a random quote for the given set, guaranteed never to repeat the previous one
-    /// (unless the set contains only one entry).
-    ///
-    /// - Parameter set: The quote set to draw from.
-    /// - Returns: A random quote string.
+    /// Returns a random quote from the given set, never repeating the previous one.
     static func nextQuote(for set: QuoteSetID) -> String {
         let quotes = quotes(for: set)
         guard quotes.count > 1 else { return quotes.first ?? "" }
@@ -51,10 +46,7 @@ struct QuoteStore {
         return quotes[next]
     }
 
-    /// Returns the quote at the current index without advancing the index.
-    ///
-    /// - Parameter set: The quote set to read from.
-    /// - Returns: The current quote string.
+    /// Returns the current quote without advancing the index.
     static func currentQuote(for set: QuoteSetID) -> String {
         let quotes = quotes(for: set)
         guard !quotes.isEmpty else { return "" }
@@ -63,10 +55,7 @@ struct QuoteStore {
 
     // MARK: Private
 
-    /// Returns the raw array of quotes for a given set.
-    ///
-    /// - Parameter set: The quote set to look up.
-    /// - Returns: The corresponding array of quote strings.
+    /// Returns the raw quote array for the given set.
     private static func quotes(for set: QuoteSetID) -> [String] {
         switch set {
         case .mirror: return mirrorQuotes
