@@ -31,7 +31,8 @@ final class NotificationManager: NSObject {
 
     // MARK: - Setup
 
-    /// Registers the notification category, sets the delegate, and requests authorization. Call once at launch.
+    /// Registers the notification category, sets the delegate, and requests authorization. Call
+    /// once at launch.
     func setUp() {
         let center = UNUserNotificationCenter.current()
         center.delegate = self
@@ -63,7 +64,8 @@ final class NotificationManager: NSObject {
 
     // MARK: - Schedule
 
-    /// Cancels pending notifications and schedules a new main notification plus follow-ups. No-op if not running.
+    /// Cancels pending notifications and schedules a new main notification plus follow-ups. No-op
+    /// if not running.
     func scheduleNext() {
         guard Persistence.isRunning else { return }
 
@@ -127,7 +129,8 @@ final class NotificationManager: NSObject {
 
     // MARK: - Backoff algorithm
 
-    /// Returns the next interval in minutes by scaling current by multiplier, adding jitter, and clamping to [5, 60].
+    /// Returns the next interval in minutes by scaling current by multiplier, adding jitter, and
+    /// clamping to [5, 60].
     func nextInterval(current: Double, multiplier: Double) -> Double {
         let raw = current * multiplier
         let jitter = Double.random(in: 0.80...1.20)

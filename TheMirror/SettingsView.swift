@@ -6,7 +6,8 @@
 import SwiftUI
 import AVFoundation
 
-/// Main app screen with controls for starting/stopping the timer and configuring quote set and sound.
+/// Main app screen with controls for starting/stopping the timer and configuring quote set and
+/// sound.
 struct SettingsView: View {
 
     @EnvironmentObject private var engine: TimerEngine
