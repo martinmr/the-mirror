@@ -142,7 +142,7 @@ final class NotificationManager: NSObject {
     private func notificationSound() -> UNNotificationSound? {
         switch Persistence.sound {
         case .silent:
-            return nil
+            return UNNotificationSound(named: UNNotificationSoundName(rawValue: "silent.caf"))
         case .bowl:
             if Bundle.main.url(forResource: "bowl", withExtension: "caf") != nil {
                 return UNNotificationSound(named: UNNotificationSoundName(rawValue: "bowl.caf"))
