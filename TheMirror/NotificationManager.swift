@@ -141,7 +141,7 @@ final class NotificationManager: NSObject {
     /// and adding jitter.
     func nextInterval(current: Double, multiplier: Double) -> Double {
         let raw = current * multiplier
-        let max_clamped = min(60.0, raw)
+        let max_clamped = min(90.0, raw)
         let jitter = Double.random(in: 0.9...1.2)
         let min_clamped = max(5.0, max_clamped * jitter)
         return floor(min_clamped)
@@ -228,7 +228,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
             }
 
         case Action.present.rawValue:
-            let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 2.0)
+            let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 1.5)
             Persistence.intervalMinutes = next
             scheduleNext()
 

@@ -80,10 +80,10 @@ struct TheMirrorTests {
     @Suite(.serialized) struct NextIntervalTests {
         let manager = NotificationManager.shared
 
-        @Test func presentMultiplierDoublesInterval() {
-            let result = manager.nextInterval(current: 10.0, multiplier: 2.0)
-            #expect(result >= 10.0 * 2.0 * 0.9)
-            #expect(result <= 10 * 2.0 * 1.2)
+        @Test func presentMultiplierIncreasesInterval() {
+            let result = manager.nextInterval(current: 10.0, multiplier: 1.5)
+            #expect(result >= 10.0 * 1.5 * 0.9)
+            #expect(result <= 10.0 * 1.5 * 1.2)
         }
 
         @Test func distractedMultiplierHalvesInterval() {
@@ -98,8 +98,8 @@ struct TheMirrorTests {
         }
 
         @Test func resultIsAlwaysClampedToMaximumPlusJitter() {
-            let result = manager.nextInterval(current: 60.0, multiplier: 2.0)
-            #expect(result <= 60.0 * 1.20)
+            let result = manager.nextInterval(current: 90.0, multiplier: 1.5)
+            #expect(result <= 90.0 * 1.20)
         }
 
         @Test func resultIsWholeMinute() {
