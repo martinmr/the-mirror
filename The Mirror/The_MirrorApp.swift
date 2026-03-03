@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct The_MirrorApp: App {
+struct TheMirrorApp: App {
 
     init() {
         NotificationManager.shared.setUp()

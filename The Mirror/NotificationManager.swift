@@ -168,9 +168,9 @@ final class NotificationManager: NSObject {
 
     /// Returns the `UNNotificationSound` that matches the user's preference.
     ///
-    /// Returns `nil` for silent (vibration only) or the bell sound for `.bell`.
+    /// Returns `nil` for silent (vibration only) or the bowl sound for `.bowl`.
     ///
-    /// Falls back to the system default sound when `bell.caf` is not bundled.
+    /// Falls back to the system default sound when `bowl.caf` is not bundled.
     private func notificationSound() -> UNNotificationSound? {
         switch Persistence.sound {
         case .silent:
@@ -248,10 +248,9 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
             }
 
         case UNNotificationDismissActionIdentifier:
-            if notifType == "main" {
-                // Leave timeout pending; it will handle the ignore
-            }
-            // If timeout was dismissed too, chain pauses; foreground recovery handles it
+            // Main dismissed: leave timeout pending — it will handle the ignore.
+            // Timeout dismissed: chain pauses; foreground recovery handles it.
+            break
 
         default:
             break

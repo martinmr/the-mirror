@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		D01CFF342F56904400A029D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D01CFEDB2F566A1900A029D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D01CFEE22F566A1900A029D6;
+			remoteInfo = "The Mirror";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		D01CFEE32F566A1900A029D6 /* The Mirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The Mirror.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D01CFF302F56904400A029D6 /* The MirrorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "The MirrorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = "The Mirror";
 			sourceTree = "<group>";
 		};
+		D01CFF312F56904400A029D6 /* The MirrorTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "The MirrorTests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D01CFEE02F566A1900A029D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D01CFF2D2F56904400A029D6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				D01CFEE52F566A1900A029D6 /* The Mirror */,
+				D01CFF312F56904400A029D6 /* The MirrorTests */,
 				D01CFEE42F566A1900A029D6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				D01CFEE32F566A1900A029D6 /* The Mirror.app */,
+				D01CFF302F56904400A029D6 /* The MirrorTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,6 +95,29 @@
 			productReference = D01CFEE32F566A1900A029D6 /* The Mirror.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D01CFF2F2F56904400A029D6 /* The MirrorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D01CFF382F56904400A029D6 /* Build configuration list for PBXNativeTarget "The MirrorTests" */;
+			buildPhases = (
+				D01CFF2C2F56904400A029D6 /* Sources */,
+				D01CFF2D2F56904400A029D6 /* Frameworks */,
+				D01CFF2E2F56904400A029D6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D01CFF352F56904400A029D6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D01CFF312F56904400A029D6 /* The MirrorTests */,
+			);
+			name = "The MirrorTests";
+			packageProductDependencies = (
+			);
+			productName = "The MirrorTests";
+			productReference = D01CFF302F56904400A029D6 /* The MirrorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -82,6 +130,10 @@
 				TargetAttributes = {
 					D01CFEE22F566A1900A029D6 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					D01CFF2F2F56904400A029D6 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = D01CFEE22F566A1900A029D6;
 					};
 				};
 			};
@@ -100,12 +152,20 @@
 			projectRoot = "";
 			targets = (
 				D01CFEE22F566A1900A029D6 /* The Mirror */,
+				D01CFF2F2F56904400A029D6 /* The MirrorTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D01CFEE12F566A1900A029D6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D01CFF2E2F56904400A029D6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +182,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D01CFF2C2F56904400A029D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D01CFF352F56904400A029D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D01CFEE22F566A1900A029D6 /* The Mirror */;
+			targetProxy = D01CFF342F56904400A029D6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D01CFEEC2F566A1900A029D6 /* Debug */ = {
@@ -310,6 +385,50 @@
 			};
 			name = Release;
 		};
+		D01CFF362F56904400A029D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZN9247QKB2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "martinmr.The-MirrorTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/The Mirror.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/The Mirror";
+			};
+			name = Debug;
+		};
+		D01CFF372F56904400A029D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZN9247QKB2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "martinmr.The-MirrorTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/The Mirror.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/The Mirror";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -327,6 +446,15 @@
 			buildConfigurations = (
 				D01CFEEF2F566A1900A029D6 /* Debug */,
 				D01CFEF02F566A1900A029D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D01CFF382F56904400A029D6 /* Build configuration list for PBXNativeTarget "The MirrorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D01CFF362F56904400A029D6 /* Debug */,
+				D01CFF372F56904400A029D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

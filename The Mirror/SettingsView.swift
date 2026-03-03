@@ -16,13 +16,13 @@ struct SettingsView: View {
     @EnvironmentObject private var engine: TimerEngine
     @State private var audioPlayer: AVAudioPlayer?
 
-    private let cream = Color(hex: "#fef7ed")
-    private let gold = Color(hex: "#B8976C")
-    private let goldDim = Color(hex: "#B8976C").opacity(0.6)
+    private static let cream = Color(hex: "#fef7ed")
+    private static let gold = Color(hex: "#B8976C")
+    private static let goldDim = Color(hex: "#B8976C").opacity(0.6)
 
     var body: some View {
         ZStack {
-            cream.ignoresSafeArea()
+            Self.cream.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer(minLength: 40)
@@ -37,11 +37,11 @@ struct SettingsView: View {
                 // Title
                 Text("The Mirror")
                     .font(.custom("Georgia", size: 28))
-                    .foregroundColor(gold)
+                    .foregroundStyle(Self.gold)
 
                 Text("a timer for presence and awareness")
                     .font(.custom("Georgia-Italic", size: 13))
-                    .foregroundColor(goldDim)
+                    .foregroundStyle(Self.goldDim)
                     .padding(.top, 4)
                     .padding(.bottom, 48)
 
@@ -59,7 +59,7 @@ struct SettingsView: View {
                             }
                         }
                         .pickerStyle(.segmented)
-                        .colorMultiply(gold)
+                        .colorMultiply(Self.gold)
                     }
 
                     // Sound
@@ -71,7 +71,7 @@ struct SettingsView: View {
                     if engine.isRunning {
                         Text("Next notification in ~\(Int(engine.intervalMinutes)) min")
                             .font(.custom("Georgia-Italic", size: 13))
-                            .foregroundColor(goldDim)
+                            .foregroundStyle(Self.goldDim)
                     }
                 }
                 .padding(.horizontal, 36)
@@ -88,18 +88,15 @@ struct SettingsView: View {
                 }) {
                     Text(engine.isRunning ? "Stop" : "Start")
                         .font(.custom("Georgia", size: 22))
-                        .foregroundColor(cream)
+                        .foregroundStyle(Self.cream)
                         .frame(width: 160, height: 56)
                         .background(
                             RoundedRectangle(cornerRadius: 28)
-                                .fill(engine.isRunning ? goldDim : gold)
+                                .fill(engine.isRunning ? Self.goldDim : Self.gold)
                         )
                 }
                 .padding(.bottom, 60)
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            engine.syncFromPersistence()
         }
     }
 
@@ -113,10 +110,10 @@ struct SettingsView: View {
                 let selected = engine.sound == pref
                 Text(pref.displayName)
                     .font(.custom("Georgia", size: 14))
-                    .foregroundColor(selected ? cream : gold)
+                    .foregroundStyle(selected ? Self.cream : Self.gold)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(selected ? gold : Color.clear)
+                    .background(selected ? Self.gold : Color.clear)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         engine.setSound(pref)
@@ -126,9 +123,9 @@ struct SettingsView: View {
                     }
             }
         }
-        .background(goldDim.opacity(0.2))
+        .background(Self.goldDim.opacity(0.2))
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(goldDim, lineWidth: 0.5))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Self.goldDim, lineWidth: 0.5))
     }
 
     /// Plays `bowl.caf` from the app bundle as an in-app preview.
@@ -151,7 +148,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.custom("Georgia", size: 13))
-                .foregroundColor(goldDim)
+                .foregroundStyle(Self.goldDim)
                 .textCase(.uppercase)
                 .tracking(1.5)
             content()

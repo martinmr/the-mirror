@@ -5,12 +5,14 @@
 
 import Foundation
 import Combine
+import UserNotifications
 
 /// UI-facing state holder for the notification timer.
 ///
-/// Publishes the current timer and settings state so SwiftUI views can react
-/// to changes. All scheduling is delegated to ``NotificationManager``; this
-/// class reads from and writes to ``Persistence`` as the source of truth.
+/// Publishes the current timer and settings state so SwiftUI views can react to changes. All
+/// scheduling is delegated to ``NotificationManager``; this class reads from and writes to
+/// ``Persistence`` as the source of truth.
+@MainActor
 final class TimerEngine: ObservableObject {
 
     /// The shared singleton instance.
@@ -44,13 +46,13 @@ final class TimerEngine: ObservableObject {
     /// Marks the timer as stopped and cancels all pending notifications.
     func stop() {
         Persistence.isRunning = false
-        UNUserNotificationCenterWrapper.cancelAll()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         syncFromPersistence()
     }
 
     /// Syncs published state from ``Persistence`` and delegates to
-    /// ``NotificationManager/ensureNotificationPending()`` to re-schedule if
-    /// the chain broke while the app was in the background.
+    /// ``NotificationManager/ensureNotificationPending()`` to re-schedule if the chain broke while
+    /// the app was in the background.
     func recover() {
         syncFromPersistence()
         NotificationManager.shared.ensureNotificationPending()
@@ -76,8 +78,8 @@ final class TimerEngine: ObservableObject {
 
     // MARK: - Sync
 
-    /// Reads all persisted values and updates the corresponding published
-    /// properties so the UI reflects the current state.
+    /// Reads all persisted values and updates the corresponding published properties so the UI
+    /// reflects the current state.
     ///
     /// Called on foreground transitions and after any state-mutating action.
     func syncFromPersistence() {
@@ -85,16 +87,5 @@ final class TimerEngine: ObservableObject {
         intervalMinutes = Persistence.intervalMinutes
         quoteSet = Persistence.quoteSet
         sound = Persistence.sound
-    }
-}
-
-// MARK: - Thin wrapper so TimerEngine doesn't import UserNotifications
-
-import UserNotifications
-
-private enum UNUserNotificationCenterWrapper {
-    /// Removes all pending local notification requests for this app.
-    static func cancelAll() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }

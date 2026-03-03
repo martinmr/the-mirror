@@ -37,19 +37,18 @@ struct QuoteStore {
 
     // MARK: Next Quote
 
-    /// Advances the quote index in ``Persistence`` and returns the next quote for the given set.
-    ///
-    /// The rotation is sequential and guaranteed never to return the same quote twice in a row
+    /// Returns a random quote for the given set, guaranteed never to repeat the previous one
     /// (unless the set contains only one entry).
     ///
     /// - Parameter set: The quote set to draw from.
-    /// - Returns: The next quote string.
+    /// - Returns: A random quote string.
     static func nextQuote(for set: QuoteSetID) -> String {
         let quotes = quotes(for: set)
         guard quotes.count > 1 else { return quotes.first ?? "" }
 
         let current = Persistence.quoteIndex % quotes.count
-        let next = (current + 1) % quotes.count
+        var next = Int.random(in: 0 ..< quotes.count - 1)
+        if next >= current { next += 1 }
         Persistence.quoteIndex = next
         return quotes[next]
     }
