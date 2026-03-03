@@ -98,6 +98,10 @@ struct SettingsView: View {
                 .padding(.bottom, 60)
             }
         }
+        .confirmationDialog("Were you present?", isPresented: $engine.awaitingInput) {
+            Button("Present") { engine.respondToPrompt(.present) }
+            Button("Distracted") { engine.respondToPrompt(.distracted) }
+        }
     }
 
     // MARK: - Sound segment control

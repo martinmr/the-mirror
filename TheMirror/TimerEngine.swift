@@ -30,6 +30,9 @@ final class TimerEngine: ObservableObject {
     /// The active sound preference.
     @Published var sound: SoundPreference = Persistence.sound
 
+    /// `true` while the app is waiting for the user to answer a plain-tap prompt in-app.
+    @Published var awaitingInput = false
+
     private init() {}
 
     // MARK: - Actions
@@ -56,6 +59,16 @@ final class TimerEngine: ObservableObject {
     func recover() {
         syncFromPersistence()
         NotificationManager.shared.ensureNotificationPending()
+    }
+
+    /// Handles a Present/Distracted response from the in-app prompt shown after a plain tap.
+    func respondToPrompt(_ action: NotificationManager.Action) {
+        awaitingInput = false
+        let multiplier = action == .present ? 2.0 : 0.5
+        let next = NotificationManager.shared.nextInterval(current: Persistence.intervalMinutes, multiplier: multiplier)
+        Persistence.intervalMinutes = next
+        syncFromPersistence()
+        NotificationManager.shared.scheduleNext()
     }
 
     // MARK: - Settings mutations

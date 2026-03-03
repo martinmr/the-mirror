@@ -105,8 +105,8 @@ struct TheMirrorTests {
 
         @Test func resultIsAlwaysClampedToMaximum() {
             for _ in 0..<50 {
-                let result = manager.nextInterval(current: 90.0, multiplier: 2.0)
-                #expect(result <= 90.0)
+                let result = manager.nextInterval(current: 60.0, multiplier: 2.0)
+                #expect(result <= 60.0)
             }
         }
 

@@ -85,12 +85,12 @@ final class NotificationManager: NSObject {
         center.removeAllPendingNotificationRequests()
 
         let intervalSecs = Persistence.intervalMinutes * 60.0
-        let spacingSecs = min(5.0, Persistence.intervalMinutes / 2.0) * 60.0
+        let spacingSecs = min(10.0, Persistence.intervalMinutes / 2.0) * 60.0
         let sound = notificationSound()
 
         schedule(identifier: ID.main, at: intervalSecs, sound: sound, center: center)
 
-        for i in 1...20 {
+        for i in 1...60 {
             let delay = intervalSecs + Double(i) * spacingSecs
             schedule(identifier: ID.timeout(i), at: delay, sound: sound, center: center)
         }
@@ -151,7 +151,7 @@ final class NotificationManager: NSObject {
         let raw = current * multiplier
         let jitter = Double.random(in: 0.80...1.20)
         let jittered = raw * jitter
-        let clamped = max(5.0, min(90.0, jittered))
+        let clamped = max(5.0, min(60.0, jittered))
         return clamped < 1.0 ? clamped : floor(clamped)
     }
 
@@ -204,7 +204,14 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         let actionID = response.actionIdentifier
 
         switch actionID {
-        case Action.present.rawValue, UNNotificationDefaultActionIdentifier:
+        case UNNotificationDefaultActionIdentifier:
+            center.removeAllPendingNotificationRequests()
+            center.removeAllDeliveredNotifications()
+            DispatchQueue.main.async {
+                TimerEngine.shared.awaitingInput = true
+            }
+
+        case Action.present.rawValue:
             center.removeAllPendingNotificationRequests()
             center.removeAllDeliveredNotifications()
             let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 2.0)
