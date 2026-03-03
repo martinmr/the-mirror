@@ -54,9 +54,9 @@ struct SettingsView: View {
                         soundSegmentedControl
                     }
 
-                    // Interval display
-                    if engine.isRunning {
-                        Text("Next notification in ~\(engine.minutesUntilNext) min")
+                    // Next notification time
+                    if engine.isRunning, let fire = engine.nextFireDate {
+                        Text("Next notification at \(fire, style: .time)")
                             .font(.custom("Georgia-Italic", size: 13))
                             .foregroundStyle(Self.goldDim)
                     }

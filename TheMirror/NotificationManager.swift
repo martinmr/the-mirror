@@ -81,6 +81,7 @@ final class NotificationManager: NSObject {
         }
 
         Persistence.lastScheduledAt = Date()
+        Persistence.nextFireDate = Date().addingTimeInterval(intervalSecs)
     }
 
     private func schedule(

@@ -29,11 +29,8 @@ final class TimerEngine: ObservableObject {
     /// True while the app is waiting for the user to answer an in-app prompt.
     @Published var awaitingInput = false
 
-    /// Whole minutes until the next notification fires.
-    @Published var minutesUntilNext: Int = 0
-
-    /// Repeating timer that keeps minutesUntilNext current while the app is foregrounded.
-    private var countdownTimer: Timer?
+    /// When the next notification is expected to fire, or nil if not running.
+    @Published var nextFireDate: Date? = Persistence.nextFireDate
 
     private init() {}
 
@@ -45,22 +42,21 @@ final class TimerEngine: ObservableObject {
         Persistence.isRunning = true
         syncFromPersistence()
         NotificationManager.shared.scheduleNext()
-        startCountdown()
+        nextFireDate = Persistence.nextFireDate
     }
 
     /// Stops the timer and cancels all pending notifications.
     func stop() {
         Persistence.isRunning = false
+        Persistence.nextFireDate = nil
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         syncFromPersistence()
-        stopCountdown()
     }
 
     /// Syncs state from persistence and re-schedules the notification chain if it broke in the background.
     func recover() {
         syncFromPersistence()
         NotificationManager.shared.ensureNotificationPending()
-        if isRunning { startCountdown() }
     }
 
     /// Handles a Present/Distracted response from the in-app prompt.
@@ -71,7 +67,7 @@ final class TimerEngine: ObservableObject {
         Persistence.intervalMinutes = next
         syncFromPersistence()
         NotificationManager.shared.scheduleNext()
-        refreshMinutesUntilNext()
+        nextFireDate = Persistence.nextFireDate
     }
 
     // MARK: - Settings mutations
@@ -96,33 +92,7 @@ final class TimerEngine: ObservableObject {
         intervalMinutes = Persistence.intervalMinutes
         quoteSet = Persistence.quoteSet
         sound = Persistence.sound
+        nextFireDate = Persistence.nextFireDate
     }
 
-    // MARK: - Countdown
-
-    /// Starts a 60-second repeating timer to keep minutesUntilNext up to date.
-    private func startCountdown() {
-        refreshMinutesUntilNext()
-        countdownTimer?.invalidate()
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                self?.refreshMinutesUntilNext()
-            }
-        }
-    }
-
-    /// Stops the countdown timer and resets minutesUntilNext to zero.
-    private func stopCountdown() {
-        countdownTimer?.invalidate()
-        countdownTimer = nil
-        minutesUntilNext = 0
-    }
-
-    /// Recalculates minutesUntilNext from the last scheduled timestamp, rounding up.
-    private func refreshMinutesUntilNext() {
-        guard let lastScheduled = Persistence.lastScheduledAt else { return }
-        let nextFireDate = lastScheduled.addingTimeInterval(Persistence.intervalMinutes * 60)
-        let remaining = nextFireDate.timeIntervalSinceNow
-        minutesUntilNext = max(0, Int(ceil(remaining / 60)))
-    }
 }

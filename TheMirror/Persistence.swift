@@ -47,6 +47,7 @@ struct Persistence {
         static let sound = "sound"
         static let quoteIndex = "quoteIndex"
         static let lastScheduledAt = "lastScheduledAt"
+        static let nextFireDate = "nextFireDate"
     }
 
     private static let defaults = UserDefaults.standard
@@ -111,6 +112,21 @@ struct Persistence {
                 defaults.set(d.timeIntervalSince1970, forKey: Keys.lastScheduledAt)
             } else {
                 defaults.removeObject(forKey: Keys.lastScheduledAt)
+            }
+        }
+    }
+
+    /// Date when the next notification is expected to fire, or nil if not running.
+    static var nextFireDate: Date? {
+        get {
+            let t = defaults.double(forKey: Keys.nextFireDate)
+            return t > 0 ? Date(timeIntervalSince1970: t) : nil
+        }
+        set {
+            if let d = newValue {
+                defaults.set(d.timeIntervalSince1970, forKey: Keys.nextFireDate)
+            } else {
+                defaults.removeObject(forKey: Keys.nextFireDate)
             }
         }
     }
