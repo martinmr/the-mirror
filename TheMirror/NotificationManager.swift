@@ -94,6 +94,10 @@ final class NotificationManager: NSObject {
                 let delay = intervalSecs + Double(i) * spacingSecs
                 schedule(identifier: ID.timeout(i), at: delay, sound: sound, quoteSet: quoteSet, center: center)
             }
+
+            DispatchQueue.main.async {
+                TimerEngine.shared.syncFromPersistence()
+            }
         }
      }
 
