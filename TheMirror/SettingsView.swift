@@ -51,7 +51,7 @@ struct SettingsView: View {
                     }
 
                     // Sound
-                    controlSection(label: "Sound — hold Bowl to preview") {
+                    controlSection(label: "Sound — hold to preview") {
                         soundSegmentedControl
                     }
 
@@ -134,6 +134,7 @@ struct SettingsView: View {
                     }
                     .onLongPressGesture(minimumDuration: 0.4) {
                         if pref == .bowl { playBowlSound() }
+                        if pref == .silent { NotificationManager.fireHeavyBurst() }
                     }
             }
         }

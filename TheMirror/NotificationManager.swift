@@ -16,9 +16,6 @@ final class NotificationManager: NSObject {
     /// Serial queue for scheduling notifications off the main thread.
     private let schedulingQueue = DispatchQueue(label: "mirror.scheduling")
 
-    /// Reusable haptic feedback generator.
-    private lazy var hapticGenerator = UINotificationFeedbackGenerator()
-
     // MARK: - Notification identifiers
 
     private enum ID {
@@ -168,8 +165,19 @@ final class NotificationManager: NSObject {
     /// Triggers haptic feedback when sound is silent.
     private func hapticIfSilent() {
         guard Persistence.sound == .silent else { return }
-        DispatchQueue.main.async { [self] in
-            hapticGenerator.notificationOccurred(.warning)
+        DispatchQueue.main.async {
+            Self.fireHeavyBurst()
+        }
+    }
+
+    /// Fires five heavy impact haptics in quick succession for a more noticeable vibration.
+    static func fireHeavyBurst() {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.prepare()
+        for i in 0..<40 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.25) {
+                generator.impactOccurred()
+            }
         }
     }
 }
