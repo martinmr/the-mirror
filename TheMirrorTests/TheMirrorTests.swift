@@ -7,7 +7,7 @@
 
 import Testing
 import Foundation
-@testable import The_Mirror
+@testable import TheMirror
 
 @Suite(.serialized)
 struct TheMirrorTests {
