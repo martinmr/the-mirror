@@ -140,14 +140,14 @@ final class NotificationManager: NSObject {
 
     // MARK: - Backoff algorithm
 
-    /// Returns the next interval in minutes by scaling current by multiplier, adding jitter, and
-    /// clamping to [5, 60].
+    /// Returns the next interval in minutes by scaling current by multiplier, clamping to [5, 60],
+    /// and adding jitter.
     func nextInterval(current: Double, multiplier: Double) -> Double {
         let raw = current * multiplier
-        let jitter = Double.random(in: 0.80...1.20)
-        let jittered = raw * jitter
-        let clamped = max(5.0, min(60.0, jittered))
-        return clamped < 1.0 ? clamped : floor(clamped)
+        let max_clamped = min(60.0, raw)
+        let jitter = Double.random(in: 0.9...1.2)
+        let min_clamped = max(5.0, max_clamped * jitter)
+        return floor(min_clamped)
     }
 
     // MARK: - Sound helper

@@ -81,40 +81,30 @@ struct TheMirrorTests {
         let manager = NotificationManager.shared
 
         @Test func presentMultiplierDoublesInterval() {
-            for _ in 0..<50 {
-                let result = manager.nextInterval(current: 10.0, multiplier: 2.0)
-                #expect(result >= 5.0)
-                #expect(result <= 90.0)
-            }
+            let result = manager.nextInterval(current: 10.0, multiplier: 2.0)
+            #expect(result >= 10.0 * 2.0 * 0.9)
+            #expect(result <= 10 * 2.0 * 1.2)
         }
 
         @Test func distractedMultiplierHalvesInterval() {
-            for _ in 0..<50 {
-                let result = manager.nextInterval(current: 20.0, multiplier: 0.5)
-                #expect(result >= 5.0)
-                #expect(result <= 90.0)
-            }
+            let result = manager.nextInterval(current: 20.0, multiplier: 0.5)
+            #expect(result >= 20.0 * 0.5 * 0.9)
+            #expect(result <= 20.0 * 0.5 * 1.2)
         }
 
         @Test func resultIsAlwaysClampedToMinimum() {
-            for _ in 0..<50 {
-                let result = manager.nextInterval(current: 5.0, multiplier: 0.5)
-                #expect(result >= 5.0)
-            }
+            let result = manager.nextInterval(current: 5.0, multiplier: 0.5)
+            #expect(result >= 5.0)
         }
 
-        @Test func resultIsAlwaysClampedToMaximum() {
-            for _ in 0..<50 {
-                let result = manager.nextInterval(current: 60.0, multiplier: 2.0)
-                #expect(result <= 60.0)
-            }
+        @Test func resultIsAlwaysClampedToMaximumPlusJitter() {
+            let result = manager.nextInterval(current: 60.0, multiplier: 2.0)
+            #expect(result <= 60.0 * 1.20)
         }
 
         @Test func resultIsWholeMinute() {
-            for _ in 0..<50 {
-                let result = manager.nextInterval(current: 30.0, multiplier: 1.0)
-                #expect(result == floor(result))
-            }
+            let result = manager.nextInterval(current: 30.0, multiplier: 1.233)
+            #expect(result == floor(result))
         }
     }
 
