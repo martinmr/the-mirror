@@ -82,8 +82,13 @@ final class NotificationManager: NSObject {
 
         Persistence.lastScheduledAt = Date()
         Persistence.nextFireDate = Date().addingTimeInterval(intervalSecs)
+
+        DispatchQueue.main.async {
+            TimerEngine.shared.syncFromPersistence()
+        }
     }
 
+    /// Schedules a single notification with the given identifier, delay, and sound.
     private func schedule(
         identifier: String,
         at delay: TimeInterval,
@@ -150,13 +155,23 @@ final class NotificationManager: NSObject {
 
 extension NotificationManager: UNUserNotificationCenterDelegate {
 
-    /// Shows notifications as banners even when the app is foregrounded.
+    /// When the app is foregrounded, suppresses the banner and triggers the in-app prompt instead.
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.banner, .sound])
+        guard Persistence.isRunning else {
+            completionHandler([])
+            return
+        }
+
+        center.removeAllPendingNotificationRequests()
+        center.removeAllDeliveredNotifications()
+        DispatchQueue.main.async {
+            TimerEngine.shared.awaitingInput = true
+        }
+        completionHandler([.sound])
     }
 
     /// Handles a notification action and reschedules the next notification chain.

@@ -42,7 +42,6 @@ final class TimerEngine: ObservableObject {
         Persistence.isRunning = true
         syncFromPersistence()
         NotificationManager.shared.scheduleNext()
-        nextFireDate = Persistence.nextFireDate
     }
 
     /// Stops the timer and cancels all pending notifications.
@@ -67,7 +66,6 @@ final class TimerEngine: ObservableObject {
         Persistence.intervalMinutes = next
         syncFromPersistence()
         NotificationManager.shared.scheduleNext()
-        nextFireDate = Persistence.nextFireDate
     }
 
     // MARK: - Settings mutations
