@@ -50,16 +50,7 @@ struct SettingsView: View {
 
                     // Quote Set
                     controlSection(label: "Quote Set") {
-                        Picker("Quote Set", selection: Binding(
-                            get: { engine.quoteSet },
-                            set: { engine.setQuoteSet($0) }
-                        )) {
-                            ForEach(QuoteSetID.allCases, id: \.self) { set in
-                                Text(set.displayName).tag(set)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .colorMultiply(Self.gold)
+                        quoteSetSegmentedControl
                     }
 
                     // Sound
@@ -69,7 +60,7 @@ struct SettingsView: View {
 
                     // Interval display
                     if engine.isRunning {
-                        Text("Next notification in ~\(Int(engine.intervalMinutes)) min")
+                        Text("Next notification in ~\(engine.minutesUntilNext) min")
                             .font(.custom("Georgia-Italic", size: 13))
                             .foregroundStyle(Self.goldDim)
                     }
@@ -102,6 +93,29 @@ struct SettingsView: View {
             Button("Present") { engine.respondToPrompt(.present) }
             Button("Distracted") { engine.respondToPrompt(.distracted) }
         }
+    }
+
+    // MARK: - Quote set segment control
+
+    private var quoteSetSegmentedControl: some View {
+        HStack(spacing: 0) {
+            ForEach(QuoteSetID.allCases, id: \.self) { set in
+                let selected = engine.quoteSet == set
+                Text(set.displayName)
+                    .font(.custom("Georgia", size: 14))
+                    .foregroundStyle(selected ? Self.cream : Self.gold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(selected ? Self.gold : Color.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        engine.setQuoteSet(set)
+                    }
+            }
+        }
+        .background(Self.goldDim.opacity(0.2))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Self.goldDim, lineWidth: 0.5))
     }
 
     // MARK: - Sound segment control

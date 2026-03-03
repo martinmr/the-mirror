@@ -23,16 +23,14 @@ struct QuoteStore {
     ]
 
     private static let dreamYogaQuotes: [String] = [
-        "Are you dreaming right now?",
-        "Look at your hands — are they the hands of a dreamer?",
-        "This moment, like all moments, could be a dream",
-        "The waking state and the dream state share one nature",
-        "Recognize the dream within the dream",
-        "What is the difference between this and a dream?",
-        "In the dream, the dreamer and the dream are not two",
-        "Every perception is an opportunity to wake up",
-        "The lucid dreamer finds freedom in both worlds",
-        "If this were a dream, how would you know?"
+        "Samsara is like a dream, it’s like a magical illusion.",
+        "Nirvana too  is like a dream, it’s like a magical illusion.",
+        "Recognize that perceived objects are your own mind, like seeing something in one's dreams.",
+        "Since everything is but an illusion, One might as well burst out laughing!",
+        "From the day we are born to until the day we die, this entire life is like last night's dream.",
+        "The Buddhas have seen this world to be illusory just like a dream.",
+        "Feeling is like a bubble, perception is like a mirage, consciousness is like an illusion.",
+        "If there were anything greater than nirvāṇa, that too would be like a dream."
     ]
 
     // MARK: Next Quote
