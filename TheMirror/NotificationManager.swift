@@ -4,6 +4,7 @@
 //
 
 import UserNotifications
+import UIKit
 import Foundation
 
 /// Singleton that manages notification permissions, scheduling, and response handling.
@@ -149,6 +150,15 @@ final class NotificationManager: NSObject {
             return .default
         }
     }
+
+    /// Triggers haptic feedback when sound is silent.
+    private func hapticIfSilent() {
+        guard Persistence.sound == .silent else { return }
+        DispatchQueue.main.async {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.warning)
+        }
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -168,6 +178,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
 
         center.removeAllPendingNotificationRequests()
         center.removeAllDeliveredNotifications()
+        hapticIfSilent()
         DispatchQueue.main.async {
             TimerEngine.shared.awaitingInput = true
         }
@@ -190,6 +201,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         case UNNotificationDefaultActionIdentifier:
             center.removeAllPendingNotificationRequests()
             center.removeAllDeliveredNotifications()
+            hapticIfSilent()
             DispatchQueue.main.async {
                 TimerEngine.shared.awaitingInput = true
             }
