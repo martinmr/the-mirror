@@ -21,8 +21,8 @@ final class NotificationManager: NSObject {
 
     private enum ID {
         static let main = "mirror.main"
-        static let timeout = "mirror.timeout"
         static let category = "mirror.category"
+        static func timeout(_ n: Int) -> String { "mirror.timeout.\(n)" }
     }
 
     // MARK: - Action identifiers
@@ -68,65 +68,58 @@ final class NotificationManager: NSObject {
         }
     }
 
-    // MARK: - Schedule next notification pair
+    // MARK: - Schedule
 
-    /// Cancels any pending notifications and schedules a new pair:
-    /// - **Main** notification at the current interval from now.
-    /// - **Timeout** notification at the current interval + 5 minutes from now.
+    /// Cancels all pending notifications and schedules a main notification plus up to 20 follow-ups.
     ///
-    /// If the user responds to the main notification, the timeout is cancelled. If the user ignores
-    /// the main, the timeout fires and the ignore penalty is applied when the user eventually taps
-    /// it.
+    /// - Main fires at the current interval.
+    /// - Follow-ups are spaced `min(5, interval/2)` minutes apart after the main, so the chain
+    ///   survives even if the user ignores every notification until they next open the app.
+    /// - All pending notifications are cancelled when the user responds to any one of them.
     ///
     /// Does nothing if ``Persistence/isRunning`` is `false`.
     func scheduleNext() {
         guard Persistence.isRunning else { return }
 
         let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(withIdentifiers: [ID.main, ID.timeout])
+        center.removeAllPendingNotificationRequests()
 
         let intervalSecs = Persistence.intervalMinutes * 60.0
-        let timeoutSecs = intervalSecs + 5 * 60.0
-
-        let quote = QuoteStore.nextQuote(for: Persistence.quoteSet)
+        let spacingSecs = min(5.0, Persistence.intervalMinutes / 2.0) * 60.0
         let sound = notificationSound()
 
-        // Main notification
-        let mainContent = UNMutableNotificationContent()
-        mainContent.title = "The Mirror"
-        mainContent.body = quote
-        mainContent.categoryIdentifier = ID.category
-        mainContent.sound = sound  // nil = vibrate only
-        mainContent.userInfo = ["notifType": "main"]
+        schedule(identifier: ID.main, at: intervalSecs, sound: sound, center: center)
 
-        let mainTrigger = UNTimeIntervalNotificationTrigger(timeInterval: intervalSecs, repeats: false)
-        let mainRequest = UNNotificationRequest(identifier: ID.main, content: mainContent, trigger: mainTrigger)
-
-        // Timeout notification (fires if user ignores main)
-        let timeoutContent = UNMutableNotificationContent()
-        let timeoutQuote = QuoteStore.nextQuote(for: Persistence.quoteSet)
-        timeoutContent.title = "The Mirror"
-        timeoutContent.body = timeoutQuote
-        timeoutContent.categoryIdentifier = ID.category
-        timeoutContent.sound = sound  // nil = vibrate only
-        timeoutContent.userInfo = ["notifType": "timeout"]
-
-        let timeoutTrigger = UNTimeIntervalNotificationTrigger(timeInterval: timeoutSecs, repeats: false)
-        let timeoutRequest = UNNotificationRequest(identifier: ID.timeout, content: timeoutContent, trigger: timeoutTrigger)
-
-        center.add(mainRequest) { error in
-            if let error = error { print("[NotificationManager] Main schedule error: \(error)") }
-        }
-        center.add(timeoutRequest) { error in
-            if let error = error { print("[NotificationManager] Timeout schedule error: \(error)") }
+        for i in 1...20 {
+            let delay = intervalSecs + Double(i) * spacingSecs
+            schedule(identifier: ID.timeout(i), at: delay, sound: sound, center: center)
         }
 
         Persistence.lastScheduledAt = Date()
     }
 
+    private func schedule(
+        identifier: String,
+        at delay: TimeInterval,
+        sound: UNNotificationSound?,
+        center: UNUserNotificationCenter
+    ) {
+        let content = UNMutableNotificationContent()
+        content.title = "The Mirror"
+        content.body = QuoteStore.nextQuote(for: Persistence.quoteSet)
+        content.categoryIdentifier = ID.category
+        content.sound = sound
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        center.add(request) { error in
+            if let error = error { print("[NotificationManager] Schedule error (\(identifier)): \(error)") }
+        }
+    }
+
     // MARK: - Foreground recovery
 
-    /// Checks whether a notification is still pending and, if not, schedules a new one immediately.
+    /// Checks whether any notification is still pending and, if not, schedules a new chain.
     ///
     /// Should be called every time the app enters the foreground so that the notification chain can
     /// recover if a background wakeup was terminated by iOS before scheduling completed.
@@ -136,7 +129,7 @@ final class NotificationManager: NSObject {
         guard Persistence.isRunning else { return }
 
         UNUserNotificationCenter.current().getPendingNotificationRequests { [weak self] requests in
-            let hasPending = requests.contains { $0.identifier == ID.main || $0.identifier == ID.timeout }
+            let hasPending = requests.contains { $0.identifier.hasPrefix("mirror.") }
             if !hasPending {
                 DispatchQueue.main.async {
                     self?.scheduleNext()
@@ -152,15 +145,13 @@ final class NotificationManager: NSObject {
     ///
     /// - Parameters:
     ///   - current: The current interval in minutes.
-    ///   - multiplier: Scaling factor — `2.0` for Present, `0.5` for Distracted, `0.75` for
-    ///     Ignored.
+    ///   - multiplier: Scaling factor — `2.0` for Present, `0.5` for Distracted.
     /// - Returns: The next interval in minutes, floored to a whole minute for values ≥ 1 minute.
-    private func nextInterval(current: Double, multiplier: Double) -> Double {
+    func nextInterval(current: Double, multiplier: Double) -> Double {
         let raw = current * multiplier
         let jitter = Double.random(in: 0.75...1.25)
         let jittered = raw * jitter
         let clamped = max(5.0, min(90.0, jittered))
-        // floor() only makes sense for whole-minute production values; skip it sub-minute
         return clamped < 1.0 ? clamped : floor(clamped)
     }
 
@@ -176,7 +167,6 @@ final class NotificationManager: NSObject {
         case .silent:
             return nil
         case .bowl:
-            // Use bowl.caf if bundled, fall back to default
             if Bundle.main.url(forResource: "bowl", withExtension: "caf") != nil {
                 return UNNotificationSound(named: UNNotificationSoundName(rawValue: "bowl.caf"))
             }
@@ -198,15 +188,10 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         completionHandler([.banner, .sound])
     }
 
-    /// Processes the user's response to a notification action and schedules the next notification
-    /// pair with the appropriate backoff multiplier.
+    /// Processes the user's response to any notification and schedules the next chain.
     ///
-    /// Response cases:
-    /// - **Present** action — cancels the timeout, doubles the interval.
-    /// - **Distracted** action — cancels the timeout, halves the interval.
-    /// - **Default tap** on the main notification — treated as Present.
-    /// - **Default tap** on the timeout notification — applies the ×0.75 ignore penalty.
-    /// - **Dismiss** on the main notification — leaves the timeout pending.
+    /// All pending notifications are cancelled on any response. The multiplier applied depends
+    /// on the action tapped — Present (×2.0), Distracted (×0.5), or default tap (×2.0).
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
@@ -216,40 +201,24 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
 
         guard Persistence.isRunning else { return }
 
-        let notifType = response.notification.request.content.userInfo["notifType"] as? String ?? "main"
         let actionID = response.actionIdentifier
 
         switch actionID {
-        case Action.present.rawValue:
-            center.removePendingNotificationRequests(withIdentifiers: [ID.timeout])
+        case Action.present.rawValue, UNNotificationDefaultActionIdentifier:
+            center.removeAllPendingNotificationRequests()
+            center.removeAllDeliveredNotifications()
             let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 2.0)
             Persistence.intervalMinutes = next
             scheduleNext()
 
         case Action.distracted.rawValue:
-            center.removePendingNotificationRequests(withIdentifiers: [ID.timeout])
+            center.removeAllPendingNotificationRequests()
+            center.removeAllDeliveredNotifications()
             let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 0.5)
             Persistence.intervalMinutes = next
             scheduleNext()
 
-        case UNNotificationDefaultActionIdentifier:
-            if notifType == "timeout" {
-                // Timeout fired: treat original as Ignored (×0.75)
-                center.removePendingNotificationRequests(withIdentifiers: [ID.main])
-                let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 0.75)
-                Persistence.intervalMinutes = next
-                scheduleNext()
-            } else {
-                // Main notification tapped without action — treat as Present
-                center.removePendingNotificationRequests(withIdentifiers: [ID.timeout])
-                let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 2.0)
-                Persistence.intervalMinutes = next
-                scheduleNext()
-            }
-
         case UNNotificationDismissActionIdentifier:
-            // Main dismissed: leave timeout pending — it will handle the ignore.
-            // Timeout dismissed: chain pauses; foreground recovery handles it.
             break
 
         default:

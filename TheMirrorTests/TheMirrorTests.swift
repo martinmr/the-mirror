@@ -75,6 +75,49 @@ struct TheMirrorTests {
         }
     }
 
+    // MARK: - NotificationManager.nextInterval
+
+    @Suite(.serialized) struct NextIntervalTests {
+        let manager = NotificationManager.shared
+
+        @Test func presentMultiplierDoublesInterval() {
+            for _ in 0..<50 {
+                let result = manager.nextInterval(current: 10.0, multiplier: 2.0)
+                #expect(result >= 5.0)
+                #expect(result <= 90.0)
+            }
+        }
+
+        @Test func distractedMultiplierHalvesInterval() {
+            for _ in 0..<50 {
+                let result = manager.nextInterval(current: 20.0, multiplier: 0.5)
+                #expect(result >= 5.0)
+                #expect(result <= 90.0)
+            }
+        }
+
+        @Test func resultIsAlwaysClampedToMinimum() {
+            for _ in 0..<50 {
+                let result = manager.nextInterval(current: 5.0, multiplier: 0.5)
+                #expect(result >= 5.0)
+            }
+        }
+
+        @Test func resultIsAlwaysClampedToMaximum() {
+            for _ in 0..<50 {
+                let result = manager.nextInterval(current: 90.0, multiplier: 2.0)
+                #expect(result <= 90.0)
+            }
+        }
+
+        @Test func resultIsWholeMinute() {
+            for _ in 0..<50 {
+                let result = manager.nextInterval(current: 30.0, multiplier: 1.0)
+                #expect(result == floor(result))
+            }
+        }
+    }
+
     // MARK: - Persistence
 
     @Suite(.serialized) struct PersistenceTests {
