@@ -13,6 +13,12 @@ final class NotificationManager: NSObject {
     /// The shared singleton instance.
     static let shared = NotificationManager()
 
+    /// Serial queue for scheduling notifications off the main thread.
+    private let schedulingQueue = DispatchQueue(label: "mirror.scheduling")
+
+    /// Reusable haptic feedback generator.
+    private lazy var hapticGenerator = UINotificationFeedbackGenerator()
+
     // MARK: - Notification identifiers
 
     private enum ID {
@@ -69,25 +75,25 @@ final class NotificationManager: NSObject {
     func scheduleNext() {
         guard Persistence.isRunning else { return }
 
-        let center = UNUserNotificationCenter.current()
-        center.removeAllPendingNotificationRequests()
-
         let intervalSecs = Persistence.intervalMinutes * 60.0
         let spacingSecs = min(10.0, Persistence.intervalMinutes / 2.0) * 60.0
         let sound = notificationSound()
-
-        schedule(identifier: ID.main, at: intervalSecs, sound: sound, center: center)
-
-        for i in 1...60 {
-            let delay = intervalSecs + Double(i) * spacingSecs
-            schedule(identifier: ID.timeout(i), at: delay, sound: sound, center: center)
-        }
+        let quoteSet = Persistence.quoteSet
 
         Persistence.lastScheduledAt = Date()
         Persistence.nextFireDate = Date().addingTimeInterval(intervalSecs)
 
-        DispatchQueue.main.async {
-            TimerEngine.shared.syncFromPersistence()
+        schedulingQueue.async { [self] in
+            let center = UNUserNotificationCenter.current()
+            center.removeAllPendingNotificationRequests()
+            center.removeAllDeliveredNotifications()
+
+            schedule(identifier: ID.main, at: intervalSecs, sound: sound, quoteSet: quoteSet, center: center)
+
+            for i in 1...60 {
+                let delay = intervalSecs + Double(i) * spacingSecs
+                schedule(identifier: ID.timeout(i), at: delay, sound: sound, quoteSet: quoteSet, center: center)
+            }
         }
      }
 
@@ -96,11 +102,12 @@ final class NotificationManager: NSObject {
         identifier: String,
         at delay: TimeInterval,
         sound: UNNotificationSound?,
+        quoteSet: QuoteSetID,
         center: UNUserNotificationCenter
     ) {
         let content = UNMutableNotificationContent()
         content.title = "The Mirror"
-        content.body = QuoteStore.nextQuote(for: Persistence.quoteSet)
+        content.body = QuoteStore.nextQuote(for: quoteSet)
         content.categoryIdentifier = ID.category
         content.sound = sound
 
@@ -157,9 +164,8 @@ final class NotificationManager: NSObject {
     /// Triggers haptic feedback when sound is silent.
     private func hapticIfSilent() {
         guard Persistence.sound == .silent else { return }
-        DispatchQueue.main.async {
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.warning)
+        DispatchQueue.main.async { [self] in
+            hapticGenerator.notificationOccurred(.warning)
         }
     }
 }
@@ -210,15 +216,11 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
             }
 
         case Action.present.rawValue:
-            center.removeAllPendingNotificationRequests()
-            center.removeAllDeliveredNotifications()
             let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 2.0)
             Persistence.intervalMinutes = next
             scheduleNext()
 
         case Action.distracted.rawValue:
-            center.removeAllPendingNotificationRequests()
-            center.removeAllDeliveredNotifications()
             let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 0.5)
             Persistence.intervalMinutes = next
             scheduleNext()
