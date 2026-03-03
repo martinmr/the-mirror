@@ -149,7 +149,7 @@ final class NotificationManager: NSObject {
     /// - Returns: The next interval in minutes, floored to a whole minute for values ≥ 1 minute.
     func nextInterval(current: Double, multiplier: Double) -> Double {
         let raw = current * multiplier
-        let jitter = Double.random(in: 0.75...1.25)
+        let jitter = Double.random(in: 0.80...1.20)
         let jittered = raw * jitter
         let clamped = max(5.0, min(90.0, jittered))
         return clamped < 1.0 ? clamped : floor(clamped)
