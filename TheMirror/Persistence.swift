@@ -24,13 +24,13 @@ enum QuoteSetID: String, CaseIterable {
 /// The notification sound the user has selected.
 enum SoundPreference: String, CaseIterable {
     case bowl = "bowl"
-    case silent = "silent"
+    case tingsha = "tingsha"
 
     /// Human-readable name for display.
     var displayName: String {
         switch self {
         case .bowl: return "Bowl"
-        case .silent: return "Silent"
+        case .tingsha: return "Tingsha"
         }
     }
 }

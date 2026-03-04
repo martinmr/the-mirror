@@ -133,8 +133,7 @@ struct SettingsView: View {
                         engine.setSound(pref)
                     }
                     .onLongPressGesture(minimumDuration: 0.4) {
-                        if pref == .bowl { playBowlSound() }
-                        if pref == .silent { NotificationManager.fireHeavyBurst() }
+                        previewSound(pref)
                     }
             }
         }
@@ -143,9 +142,9 @@ struct SettingsView: View {
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Self.goldDim, lineWidth: 0.5))
     }
 
-    /// Plays the bowl sound from the app bundle as a preview.
-    private func playBowlSound() {
-        guard let url = Bundle.main.url(forResource: "bowl", withExtension: "caf") else { return }
+    /// Plays the selected sound from the app bundle as a preview.
+    private func previewSound(_ pref: SoundPreference) {
+        guard let url = Bundle.main.url(forResource: pref.rawValue, withExtension: "caf") else { return }
         audioPlayer = try? AVAudioPlayer(contentsOf: url)
         audioPlayer?.play()
     }

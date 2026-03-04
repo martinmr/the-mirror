@@ -149,11 +149,14 @@ final class NotificationManager: NSObject {
 
     // MARK: - Sound helper
 
-    /// Returns the UNNotificationSound for the user's preference, or nil for silent.
+    /// Returns the UNNotificationSound for the user's sound preference.
     private func notificationSound() -> UNNotificationSound? {
         switch Persistence.sound {
-        case .silent:
-            return UNNotificationSound(named: UNNotificationSoundName(rawValue: "silent.caf"))
+        case .tingsha:
+            if Bundle.main.url(forResource: "tingsha", withExtension: "caf") != nil {
+                return UNNotificationSound(named: UNNotificationSoundName(rawValue: "tingsha.caf"))
+            }
+            return .default
         case .bowl:
             if Bundle.main.url(forResource: "bowl", withExtension: "caf") != nil {
                 return UNNotificationSound(named: UNNotificationSoundName(rawValue: "bowl.caf"))
@@ -162,24 +165,6 @@ final class NotificationManager: NSObject {
         }
     }
 
-    /// Triggers haptic feedback when sound is silent.
-    private func hapticIfSilent() {
-        guard Persistence.sound == .silent else { return }
-        DispatchQueue.main.async {
-            Self.fireHeavyBurst()
-        }
-    }
-
-    /// Fires five heavy impact haptics in quick succession for a more noticeable vibration.
-    static func fireHeavyBurst() {
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.prepare()
-        for i in 0..<40 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.25) {
-                generator.impactOccurred()
-            }
-        }
-    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -199,7 +184,6 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
 
         center.removeAllPendingNotificationRequests()
         center.removeAllDeliveredNotifications()
-        hapticIfSilent()
         DispatchQueue.main.async {
             TimerEngine.shared.awaitingInput = true
         }
@@ -222,7 +206,6 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         case UNNotificationDefaultActionIdentifier:
             center.removeAllPendingNotificationRequests()
             center.removeAllDeliveredNotifications()
-            hapticIfSilent()
             DispatchQueue.main.async {
                 TimerEngine.shared.awaitingInput = true
             }

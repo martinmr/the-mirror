@@ -67,7 +67,7 @@ struct TheMirrorTests {
     @Suite struct SoundPreferenceTests {
         @Test func displayNames() {
             #expect(SoundPreference.bowl.displayName == "Bowl")
-            #expect(SoundPreference.silent.displayName == "Silent")
+            #expect(SoundPreference.tingsha.displayName == "Tingsha")
         }
 
         @Test func allCasesCount() {
