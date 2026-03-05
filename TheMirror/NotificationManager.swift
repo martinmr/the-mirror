@@ -211,7 +211,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
             }
 
         case Action.present.rawValue:
-            let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 1.5)
+            let next = nextInterval(current: Persistence.intervalMinutes, multiplier: 2.0)
             Persistence.intervalMinutes = next
             scheduleNext()
 
