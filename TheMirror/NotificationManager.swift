@@ -73,7 +73,7 @@ final class NotificationManager: NSObject {
         guard Persistence.isRunning else { return }
 
         let intervalSecs = Persistence.intervalMinutes * 60.0
-        let spacingSecs = min(10.0, Persistence.intervalMinutes / 2.0) * 60.0
+        let spacingSecs = max(10.0, Persistence.intervalMinutes / 2.0) * 60.0
         let sound = notificationSound()
         let quoteSet = Persistence.quoteSet
 
