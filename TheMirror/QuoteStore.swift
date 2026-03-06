@@ -25,7 +25,7 @@ struct QuoteStore {
         "Samsara is like a dream, it's like a magical illusion.",
         "Nirvana too  is like a dream, it's like a magical illusion.",
         "Recognize that perceived objects are your own mind, like seeing something in one's dreams.",
-        "Since everything is but an illus\qion, One might as well burst out laughing!",
+        "Since everything is but an illusion, one might as well burst out laughing!",
         "From the day we are born to until the day we die, this entire life is like last night's dream.",
         "The Buddhas have seen this world to be illusory just like a dream.",
         "Feeling is like a bubble, perception is like a mirage, consciousness is like an illusion.",

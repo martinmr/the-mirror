@@ -19,7 +19,7 @@ private extension Theme {
                 .markdownTextStyle {
                     FontFamily(.custom("Georgia"))
                     FontSize(24)
-                    FontWeight(.regular)
+                    FontWeight(.bold)
                 }
                 .markdownMargin(top: 0, bottom: 16)
         }
@@ -28,7 +28,7 @@ private extension Theme {
                 .markdownTextStyle {
                     FontFamily(.custom("Georgia"))
                     FontSize(20)
-                    FontWeight(.regular)
+                    FontWeight(.bold)
                 }
                 .markdownMargin(top: 24, bottom: 8)
         }
