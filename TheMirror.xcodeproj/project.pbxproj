@@ -90,6 +90,7 @@
 			);
 			name = TheMirror;
 			packageProductDependencies = (
+				D0A000022F60000000000002 /* MarkdownUI */,
 			);
 			productName = TheMirror;
 			productReference = D01CFEE32F566A1900A029D6 /* TheMirror.app */;
@@ -148,6 +149,9 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D01CFEE42F566A1900A029D6 /* Products */;
+			packageReferences = (
+				D0A000012F60000000000001 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -460,6 +464,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D0A000012F60000000000001 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D0A000022F60000000000002 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0A000012F60000000000001 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D01CFEDB2F566A1900A029D6 /* Project object */;
 }

@@ -3,10 +3,47 @@
 //  The Mirror
 //
 
+import MarkdownUI
 import SwiftUI
 
-struct HelpView: View {
+/// The theme for rendering the help markdown.
+private extension Theme {
+    static let mirror = Theme()
+        .text {
+            FontFamily(.custom("Georgia"))
+            FontSize(15)
+            ForegroundColor(Color(hex: "#B8976C"))
+        }
+        .heading1 { configuration in
+            configuration.label
+                .markdownTextStyle {
+                    FontFamily(.custom("Georgia"))
+                    FontSize(24)
+                    FontWeight(.regular)
+                }
+                .markdownMargin(top: 0, bottom: 16)
+        }
+        .heading2 { configuration in
+            configuration.label
+                .markdownTextStyle {
+                    FontFamily(.custom("Georgia"))
+                    FontSize(20)
+                    FontWeight(.regular)
+                }
+                .markdownMargin(top: 24, bottom: 8)
+        }
+        .paragraph { configuration in
+            configuration.label
+                .markdownMargin(top: 0, bottom: 12)
+        }
+        .listItem { configuration in
+            configuration.label
+                .markdownMargin(top: 4)
+        }
+}
 
+/// The view that displays the help content loaded from the bundled markdown file.
+struct HelpView: View {
     @Environment(\.dismiss) private var dismiss
 
     private static let cream = Color(hex: "#fef7ed")
@@ -17,29 +54,10 @@ struct HelpView: View {
             Self.cream.ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
-                        switch block {
-                        case .header(let text, let level):
-                            Text(text)
-                                .font(.custom("Georgia", size: level == 1 ? 24 : 20))
-                                .foregroundStyle(Self.gold)
-                        case .paragraph(let text):
-                            Text(inlineMarkdown(text))
-                                .font(.custom("Georgia", size: 15))
-                                .foregroundStyle(Self.gold)
-                        case .listItem(let text):
-                            HStack(alignment: .top, spacing: 8) {
-                                Text("\u{2022}")
-                                Text(inlineMarkdown(text))
-                            }
-                            .font(.custom("Georgia", size: 15))
-                            .foregroundStyle(Self.gold)
-                        }
-                    }
-                }
-                .padding(24)
-                .padding(.top, 20)
+                Markdown(helpText)
+                    .markdownTheme(.mirror)
+                    .padding(24)
+                    .padding(.top, 20)
             }
 
             Button {
@@ -51,61 +69,12 @@ struct HelpView: View {
                     .padding(16)
             }
         }
-
     }
 
-    // MARK: - Markdown parsing
-
-    private enum Block {
-        case header(String, level: Int)
-        case paragraph(String)
-        case listItem(String)
-    }
-
-    private var blocks: [Block] {
+    private var helpText: String {
         guard let url = Bundle.main.url(forResource: "help", withExtension: "md"),
               let text = try? String(contentsOf: url, encoding: .utf8)
-        else { return [] }
-
-        var result: [Block] = []
-        let paragraphs = text.components(separatedBy: "\n\n")
-
-        for para in paragraphs {
-            let trimmed = para.trimmingCharacters(in: .whitespacesAndNewlines)
-            if trimmed.isEmpty { continue }
-
-            if trimmed.hasPrefix("## ") {
-                result.append(.header(String(trimmed.dropFirst(3)), level: 2))
-            } else if trimmed.hasPrefix("# ") {
-                result.append(.header(String(trimmed.dropFirst(2)), level: 1))
-            } else if trimmed.hasPrefix("- ") {
-                let lines = trimmed.components(separatedBy: "\n")
-                var currentItem = ""
-                for line in lines {
-                    if line.hasPrefix("- ") {
-                        if !currentItem.isEmpty {
-                            result.append(.listItem(currentItem))
-                        }
-                        currentItem = String(line.dropFirst(2))
-                    } else {
-                        currentItem += " " + line.trimmingCharacters(in: .whitespaces)
-                    }
-                }
-                if !currentItem.isEmpty {
-                    result.append(.listItem(currentItem))
-                }
-            } else {
-                let joined = trimmed.components(separatedBy: "\n").joined(separator: " ")
-                result.append(.paragraph(joined))
-            }
-        }
-        return result
-    }
-
-    private func inlineMarkdown(_ text: String) -> AttributedString {
-        (try? AttributedString(
-            markdown: text,
-            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        )) ?? AttributedString(text)
+        else { return "Unable to load help content." }
+        return text
     }
 }
