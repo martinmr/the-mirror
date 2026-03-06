@@ -22,8 +22,8 @@ struct QuoteStore {
     ]
 
     private static let dreamYogaQuotes: [String] = [
-        "Samsara is like a dream, it’s like a magical illusion.",
-        "Nirvana too  is like a dream, it’s like a magical illusion.",
+        "Samsara is like a dream, it's like a magical illusion.",
+        "Nirvana too  is like a dream, it's like a magical illusion.",
         "Recognize that perceived objects are your own mind, like seeing something in one's dreams.",
         "Since everything is but an illusion, One might as well burst out laughing!",
         "From the day we are born to until the day we die, this entire life is like last night's dream.",

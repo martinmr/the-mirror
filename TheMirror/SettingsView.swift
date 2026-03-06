@@ -12,6 +12,7 @@ struct SettingsView: View {
 
     @EnvironmentObject private var engine: TimerEngine
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var showingHelp = false
 
     private static let cream = Color(hex: "#fef7ed")
     private static let gold = Color(hex: "#B8976C")
@@ -85,6 +86,19 @@ struct SettingsView: View {
                 }
                 .padding(.bottom, 60)
             }
+        }
+        .overlay(alignment: .topTrailing) {
+            Button {
+                showingHelp = true
+            } label: {
+                Image(systemName: "questionmark.circle")
+                    .font(.system(size: 22))
+                    .foregroundStyle(Self.gold)
+                    .padding(16)
+            }
+        }
+        .fullScreenCover(isPresented: $showingHelp) {
+            HelpView()
         }
         .confirmationDialog("Were you present?", isPresented: $engine.awaitingInput) {
             Button("Present") { engine.respondToPrompt(.present) }
