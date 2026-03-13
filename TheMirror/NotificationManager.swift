@@ -107,7 +107,7 @@ final class NotificationManager: NSObject {
         center: UNUserNotificationCenter
     ) {
         let content = UNMutableNotificationContent()
-        content.title = "The Mirror"
+        content.title = "The Mirror Timer"
         content.body = QuoteStore.nextQuote(for: quoteSet)
         content.categoryIdentifier = ID.category
         content.sound = sound
